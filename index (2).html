@@ -6,8 +6,8 @@
   <title>Accessibility Checker</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #d3d3d3;
+      font-family: 'Roboto', Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
       margin: 0;
       padding: 0;
       display: flex;
@@ -16,62 +16,100 @@
       height: 100vh;
       overflow: hidden;
     }
+
     .container {
-      background-color: white;
+      background: #ffffff;
       padding: 30px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
       width: 50%;
       max-width: 800px;
-      overflow-y: auto;
       max-height: 90%;
+      overflow-y: auto;
     }
+
     h1 {
       text-align: center;
       color: #333;
+      font-size: 2rem;
+      margin-bottom: 20px;
     }
+
     label {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #555;
     }
+
     input[type="text"] {
-      padding: 10px;
+      padding: 12px;
       width: 100%;
       margin-top: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
+      margin-bottom: 20px;
+      border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1rem;
+      transition: border-color 0.3s ease-in-out;
     }
+
+    input[type="text"]:focus {
+      border-color: #2575fc;
+      outline: none;
+    }
+
     button {
-      padding: 10px 20px;
-      background-color: #28a745;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease-in-out, transform 0.2s;
     }
+
     button:hover {
-      background-color: #218838;
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+      transform: scale(1.05);
     }
+
     .results {
-      margin-top: 20px;
+      margin-top: 30px;
     }
+
     .page {
       margin-bottom: 20px;
       padding: 15px;
-      background-color: #f9f9f9;
-      border-radius: 5px;
+      background-color: #f1f1f1;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
+
     .suggestions {
       margin-top: 10px;
-      padding: 10px;
+      padding: 15px;
       background-color: #e9f7e9;
-      border-radius: 5px;
+      border-left: 4px solid #28a745;
+      border-radius: 8px;
     }
+
+    .suggestions p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
     a {
       color: #007bff;
+      text-decoration: none;
     }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
     /* Loader animation */
     .loader-container {
       display: flex;
@@ -79,21 +117,28 @@
       align-items: center;
       margin-top: 20px;
     }
+
     .loader {
       border: 8px solid #f3f3f3;
-      border-top: 8px solid #28a745;
+      border-top: 8px solid #2575fc;
       border-radius: 50%;
       width: 50px;
       height: 50px;
-      animation: spin 2s linear infinite;
+      animation: spin 1.5s linear infinite;
     }
+
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
+
     .loading-text {
       margin-top: 10px;
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: #333;
     }
   </style>
