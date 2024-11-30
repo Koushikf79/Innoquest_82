@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessibility Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #d3d3d3;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      width: 50%;
+      max-width: 800px;
+      overflow-y: auto;
+      max-height: 90%;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      font-size: 1.2rem;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    .page {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+    .suggestions {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #e9f7e9;
+      border-radius: 5px;
+    }
+    a {
+      color: #007bff;
+    }
+    /* Loader animation */
+    .loader-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #28a745;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Accessibility Checker for Websites</h1>
+    <div>
+      <label for="url">Enter the root URL of a website to check:</label>
+      <input type="text" id="url" placeholder="https://example.com">
+      <button onclick="checkAccessibility()">Check Accessibility</button>
+    </div>
+
+    <div id="results" class="results"></div>
+    <!-- Loader container -->
+    <div id="loader-container" class="loader-container" style="display: none;">
+      <div class="loader"></div>
+      <p class="loading-text">Loading...</p>
+    </div>
+  </div>
+
+  <script>
+    async function checkAccessibility() {
+      const urlInput = document.getElementById('url');
+      const url = urlInput.value.trim();
+      const loaderContainer = document.getElementById('loader-container');
+      const resultsDiv = document.getElementById('results');
+
+      if (!url) {
+        alert('Please enter a valid URL.');
+        return;
+      }
+
+      // Show the loader and clear previous results
+      loaderContainer.style.display = 'flex';
+      resultsDiv.innerHTML = '';
+      resultsDiv.style.height = "auto";
+
+      try {
+        // Fetch accessibility results
+        const response = await fetch(`http://localhost:3001/accessibility-check?url=${encodeURIComponent(url)}`);
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        displayResults(data.aggregatedResults);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while checking accessibility.');
+      } finally {
+        // Hide loader
+        loaderContainer.style.display = 'none';
+      }
+    }
+
+    function displayResults(pages) {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = `<h2>Accessibility Check Results:</h2>`;
+
+      pages.forEach(page => {
+        resultsDiv.innerHTML += `
+          <div class="page">
+            <p><strong>Page URL:</strong> ${page.url}</p>
+            <p><strong>Accessibility Score:</strong> ${page.score}</p>
+            <p><strong>Number of Violations:</strong> ${page.violations}</p>
+        `;
+
+        if (page.suggestions.length > 0) {
+          resultsDiv.innerHTML += `<h3>Suggestions for Improvement:</h3>`;
+          page.suggestions.forEach(suggestion => {
+            resultsDiv.innerHTML += `
+              <div class="suggestions">
+                <p><strong>${suggestion.description}</strong></p>
+                <p>${suggestion.help}</p>
+                <p><a href="${suggestion.helpUrl}" target="_blank">Learn more</a></p>
+              </div>
+            `;
+          });
+        } else {
+          resultsDiv.innerHTML += `<p>No violations found!</p>`;
+        }
+
+        resultsDiv.innerHTML += `<hr/>`;
+      });
+
+      // Ensure results are scrollable if necessary
+      resultsDiv.style.height = resultsDiv.scrollHeight > 600 ? "600px" : "auto";
+      resultsDiv.style.overflowY = "auto";
+    }
+  </script>
+</body>
+</html>
